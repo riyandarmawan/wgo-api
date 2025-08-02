@@ -12,19 +12,18 @@
    [x] Create database schema
    [x] Migrate
 
-[] Auth
-   [] Intall dependencies
-   [] Generate modules and services of User and Auth
-   [] Create ```findOne``` method in ```AuthService``` (for login)
-   [] Create ```validateUser``` method in ```AuthService```
-   [] Install dependencies for passport-jwt
-   [] Add ```login``` method in ```AuthService``` that's return access_token (jwt)
-   [] Add ```JWT_SECRET_KEY``` in ```.env```
-   [] Setup jwt and passport in ```AuthModule```
-   [] Add ```/login``` endpoint in ```AuthController```
-   [] Add passport strategy
-   [] Implements passport guard
-   [] Enable authentication globally
-   [] Add ```createUser``` method in ```UserService```
-   [] Add ```register``` method in ```AuthService```
-   [] Add ```/register``` in ```AuthController```
+[x] Auth
+   [x] Intall dependencies
+   [x] Generate modules and services of User and Auth
+   [x] Create ```findOneByUsername``` method in ```UsersService``` (for login)
+   [x] Create ```validateUser``` method in ```AuthService``` that returned access_token (jwt)
+   [x] Install dependencies for passport-jwt
+   [x] Add ```JWT_SECRET_KEY``` in ```.env```
+   [x] Setup jwt and passport in ```AuthModule```
+   [x] Add ```/login``` endpoint in ```AuthController```
+   [x] Add passport strategy
+   [x] Implements passport guard
+   [x] Enable authentication globally
+   [x] Add ```createUser``` method in ```UserService```
+   [x] Add ```register``` method in ```AuthService``` that returnd access_token
+   [x] Add ```/register``` in ```AuthController```
