@@ -17,18 +17,18 @@ model User {
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
 
-  sentMessages     Chat[] @relation("SentMessages")
-  receivedMessages Chat[] @relation("ReceivedMessages")
+  sentMessages Chat[] @relation("SentMessages")
+  // receivedMessages Chat[] @relation("ReceivedMessages")
 }
 
 model Chat {
-  id          String   @id @default(uuid()) @db.Uuid
-  sender_id   String   @db.Uuid
-  receiver_id String   @db.Uuid
-  content     String
-  created_at  DateTime @default(now())
-  updated_at  DateTime @default(now()) @updatedAt
+  id         String   @id @default(uuid()) @db.Uuid
+  sender_id  String   @db.Uuid
+  // receiver_id String   @db.Uuid
+  message    String
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
 
-  sender   User @relation("SentMessages", fields: [sender_id], references: [id])
-  receiver User @relation("ReceivedMessages", fields: [receiver_id], references: [id])
+  sender User @relation("SentMessages", fields: [sender_id], references: [id])
+  // receiver User @relation("ReceivedMessages", fields: [receiver_id], references: [id])
 }

@@ -27,3 +27,10 @@
    [x] Add ```createUser``` method in ```UserService```
    [x] Add ```register``` method in ```AuthService``` that returnd access_token
    [x] Add ```/register``` in ```AuthController```
+
+[x] Chats gateway
+  [x] Install dependencies
+  [x] Generate ```ChatsModule``` and ```ChatsGateway```
+  [x] Handle connect and disconnect
+  [x] Subcribe message to ```sendMessage``` and emit to ```receiveMessage```
+  [x] Save the data in db!

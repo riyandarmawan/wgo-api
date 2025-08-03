@@ -37,7 +37,7 @@ export class AuthService {
     const { name, username, password } = data;
     const existingUser = await this.usersService.user({ username });
 
-    if (existingUser) throw new ConflictException('Username already exists');
+    if (existingUser) throw new ConflictException();
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
