@@ -10,25 +10,80 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(uuid()) @db.Uuid
-  name       String
-  username   String   @unique
-  password   String
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now()) @updatedAt
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
-  sentMessages Chat[] @relation("SentMessages")
-  // receivedMessages Chat[] @relation("ReceivedMessages")
+  sentFriendRequests     FriendRequest[]   @relation("SentFriendRequests")
+  receivedFriendRequests FriendRequest[]   @relation("ReceivedFriendRequests")
+  roomParticipants       RoomParticipant[]
+  messages               Message[]
+
+  @@map("users")
 }
 
-model Chat {
-  id         String   @id @default(uuid()) @db.Uuid
-  sender_id  String   @db.Uuid
-  // receiver_id String   @db.Uuid
-  message    String
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now()) @updatedAt
+model FriendRequest {
+  id         String              @id @default(uuid()) @db.Uuid
+  sender     User                @relation("SentFriendRequests", fields: [senderId], references: [id])
+  senderId   String              @db.Uuid
+  receiver   User                @relation("ReceivedFriendRequests", fields: [receiverId], references: [id])
+  receiverId String              @db.Uuid
+  status     FriendRequestStatus @default(PENDING)
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @default(now()) @updatedAt
 
-  sender User @relation("SentMessages", fields: [sender_id], references: [id])
-  // receiver User @relation("ReceivedMessages", fields: [receiver_id], references: [id])
+  @@unique([senderId, receiverId])
+  @@map("friend_requests")
+}
+
+model Room {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String? // null for 1-1 chats, has value for groups
+  type      RoomType @default(PRIVATE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  participants RoomParticipant[]
+  messages     Message[]
+
+  @@map("rooms")
+}
+
+model RoomParticipant {
+  id        String   @id @default(uuid()) @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @db.Uuid
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId    String   @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@unique([userId, roomId])
+  @@map("room_participants")
+}
+
+model Message {
+  id        String   @id @default(uuid()) @db.Uuid
+  content   String
+  sender    User     @relation(fields: [senderId], references: [id])
+  senderId  String   @db.Uuid
+  room      Room     @relation(fields: [roomId], references: [id])
+  roomId    String   @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("messages")
+}
+
+enum FriendRequestStatus {
+  PENDING
+  ACCEPTED
+}
+
+enum RoomType {
+  PRIVATE
+  GROUP
 }

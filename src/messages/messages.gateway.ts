@@ -3,18 +3,18 @@ import { JwtService } from '@nestjs/jwt';
 import { WebSocketGateway, OnGatewayConnection, OnGatewayDisconnect, ConnectedSocket, SubscribeMessage, MessageBody } from '@nestjs/websockets';
 import { AuthenticatedSocket } from 'src/utils/interfaces';
 import { UserPayload } from 'src/utils/types';
-import { ChatsService } from './chats.service';
+import { MessagesService } from './messages.service';
+import { PresenceService } from 'src/presence/presence.service';
 
 
 @WebSocketGateway()
-export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-    private readonly chatsService: ChatsService,
+    private readonly messagesService: MessagesService,
+    private readonly presenceService: PresenceService,
   ) { }
-
-  private onlineUsers: Map<string, AuthenticatedSocket> = new Map();
 
   handleConnection(@ConnectedSocket() client: AuthenticatedSocket) {
     const token = client.handshake.headers.access_token as string;
@@ -29,7 +29,7 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const userPayload: UserPayload = this.jwtService.verify(token, { secret });
 
       client.data.user = userPayload;
-      this.onlineUsers.set(userPayload.sub, client);
+      this.presenceService.setUserSocket(userPayload.sub, client);
 
       console.log(`${userPayload.username} connected`)
     } catch (error) {
@@ -41,25 +41,25 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleDisconnect(@ConnectedSocket() client: AuthenticatedSocket) {
     const user = client.data.user;
     if (!user) return;
-    this.onlineUsers.delete(user.sub);
+    this.presenceService.removeUserSocket(user.sub);
     console.log(`${user.username} disconnected`);
   }
 
   @SubscribeMessage('sendMessage')
-  async sendMessage(@ConnectedSocket() client: AuthenticatedSocket, @MessageBody() message: string) {
+  async sendMessage(@ConnectedSocket() client: AuthenticatedSocket, @MessageBody() content: string) {
     const userPayload = client.data.user;
 
     if (!userPayload?.sub) return;
 
-    client.broadcast.emit("receiveMessage", { sender: userPayload.sub, message });
+    client.broadcast.emit("receiveMessage", { sender: userPayload.sub, content });
 
-    this.chatsService.create({
-      sender: {
-        connect: {
-          id: userPayload.sub
-        }
-      },
-      message
-    })
+    // this.messagesService.create({
+    //   sender: {
+    //     connect: {
+    //       id: userPayload.sub
+    //     }
+    //   },
+    //   content
+    // })
   }
 }

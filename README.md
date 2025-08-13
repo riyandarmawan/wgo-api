@@ -28,9 +28,17 @@
    [x] Add ```register``` method in ```AuthService``` that returnd access_token
    [x] Add ```/register``` in ```AuthController```
 
-[x] Chats gateway
+[x] Messages gateway
   [x] Install dependencies
-  [x] Generate ```ChatsModule``` and ```ChatsGateway```
+  [x] Generate ```MessagesModule``` and ```MessagesGateway```
   [x] Handle connect and disconnect
   [x] Subcribe message to ```sendMessage``` and emit to ```receiveMessage```
   [x] Save the data in db!
+
+[x] Friend Request
+  [x] Genereate module, service, and controller
+  [x] Create endpoint api 
+    [x] ```POST /friends/request``` → send request
+    [x] ```PATCH /friends/accept``` → accept request
+    [x] ```DELETE /friends/accept``` → delete request
+  [x] Create a room for 2 participant

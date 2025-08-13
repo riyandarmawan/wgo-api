@@ -1,8 +1,10 @@
-import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
 import { RegisterDto } from './dtos/register.dto';
 import { Public } from './public.decorator';
+import { Request } from 'express';
+import { User } from 'generated/prisma';
 
 @Controller('auth')
 export class AuthController {
@@ -11,7 +13,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Public()
   @Post('login')
-  async login(@Request() req) {
+  async login(@Req() req: Request & { user: User }) {
     return this.authService.login(req.user);
   }
 
